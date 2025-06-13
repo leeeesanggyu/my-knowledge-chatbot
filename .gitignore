@@ -1,0 +1,8 @@
+.env
+/__pycache__
+/.idea
+test_main.http
+/app/models/__pycache__
+/app/__pycache__
+/app/controllers/__pycache__
+/app/services/__pycache__
