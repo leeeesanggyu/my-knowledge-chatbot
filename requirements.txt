@@ -5,3 +5,7 @@ python-dotenv
 langchain
 langchain-community
 langchain-openai
+requests
+beautifulsoup4
+chromadb
+tiktoken
