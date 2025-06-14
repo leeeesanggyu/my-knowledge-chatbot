@@ -25,3 +25,11 @@ class VelogVectorStore:
             metadatas=[metadata]
         )
         print(f"✅ {metadata['title']} 저장 완료")
+
+    def search(self, query, top_k=3):
+        results = self.collection.query(
+            query_texts=[query],
+            n_results=top_k,
+            include=['documents', 'metadatas']
+        )
+        return results

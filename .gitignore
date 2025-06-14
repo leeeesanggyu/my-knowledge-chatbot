@@ -5,6 +5,7 @@ test_main.http
 /app/models/__pycache__
 /app/__pycache__
 /app/controllers/__pycache__
-/app/services/__pycache__
+/app/graph/__pycache__
 /app/velog/__pycache__
 /app/velog/chroma_db
+/chroma_db
