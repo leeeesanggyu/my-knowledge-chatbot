@@ -1,10 +1,16 @@
+import os
+import dotenv
 from post_crawler import VelogCrawler
 from vector_store import VelogVectorStore
 import time
 
+dotenv.load_dotenv()
+
+VELOG_USERNAME = os.getenv("VELOG_USERNAME")
+
 
 def main():
-    username = "salgu1998"
+    username = VELOG_USERNAME
     TEST_MODE = False
 
     crawler = VelogCrawler(username, test_mode=TEST_MODE, test_limit=3)
@@ -30,6 +36,7 @@ def main():
         time.sleep(0.5)
 
     print("\n✅ 전체 벡터 DB 저장 완료!")
+
 
 if __name__ == "__main__":
     main()
