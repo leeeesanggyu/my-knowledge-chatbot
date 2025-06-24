@@ -4,11 +4,16 @@ from app.graph.chatbot_graph import runnable
 
 router = APIRouter()
 
+
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     try:
-        response = runnable.invoke({"question": request.question})
-        return response
+        state = {
+            "chat_id": request.chat_id,
+            "question": request.question
+        }
+
+        return runnable.invoke(state)
     except Exception as e:
         print("LangGraph 전체 실행 실패:", e)
         raise HTTPException(status_code=500, detail=str(e))

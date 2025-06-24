@@ -4,9 +4,12 @@ from langgraph.graph import StateGraph
 from app.graph.print_utils import print_search_result
 from app.velog.vector_store import VelogVectorStore
 
+# 메모리 기반 사용자별 대화 이력 저장소
+CHAT_HISTORY_STORE = {}
 
 # 상태 정의
 class GraphState(dict):
+    chat_id: str
     question: str
     search_result: dict
     answer: str
@@ -30,8 +33,12 @@ def search_node(state: GraphState):
 
 # LLM 답변 노드
 def answer_node(state: GraphState):
+    chat_id = state['chat_id']
     question = state['question']
     search_result = state['search_result']
+
+    # 메모리에서 대화 이력 불러오기 (없으면 빈 리스트)
+    history = CHAT_HISTORY_STORE.get(chat_id, [])
 
     documents = search_result['documents'][0]
     metadatas = search_result['metadatas'][0]
@@ -50,10 +57,16 @@ def answer_node(state: GraphState):
         "이 내용을 바탕으로 사용자의 질문에 최대한 상세히 답변해줘."
     )
 
-    response = llm.invoke([
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": question}
-    ])
+    messages = [{"role": "system", "content": system_prompt}] + history
+    messages.append({"role": "user", "content": question})
+    print(f"message:: {messages}")
+
+    response = llm.invoke(messages)
+
+    # 이력 업데이트 → 메모리에 저장
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": response.content})
+    CHAT_HISTORY_STORE[chat_id] = history
 
     state['answer'] = response.content
     return state
