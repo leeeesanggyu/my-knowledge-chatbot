@@ -1,21 +1,8 @@
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph
 
+from app.graph.print_utils import print_search_result
 from app.velog.vector_store import VelogVectorStore
-
-
-def print_search_result(search_result):
-    documents = search_result.get('documents', [[]])[0]
-    metadatas = search_result.get('metadatas', [[]])[0]
-    ids = search_result.get('ids', [[]])[0]
-
-    for i, (doc, meta, id) in enumerate(zip(documents, metadatas, ids), 1):
-        print(f"============ 🔎 검색 결과 {i} ============")
-        print(f"ID: {id}")
-        print(f"Title: {meta.get('title', '제목없음')}")
-        print(f"URL: {meta.get('url', 'URL없음')}")
-        print(f"Content (앞부분): {doc[:300]}...\n")  # 앞 200자만 미리보기로 출력
-        print(f"========================================")
 
 
 # 상태 정의
@@ -85,3 +72,5 @@ graph.set_finish_point("generate_answer")
 
 # 컴파일
 runnable = graph.compile()
+
+print(runnable.get_graph().draw_mermaid())
