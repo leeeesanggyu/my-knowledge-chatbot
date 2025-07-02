@@ -30,6 +30,8 @@ class VelogVectorStore:
         results = self.collection.query(
             query_texts=[query],
             n_results=top_k,
-            include=['documents', 'metadatas']
+            include=['documents', 'metadatas', 'distances']
         )
+
+        print(f"search results: {results}")
         return results

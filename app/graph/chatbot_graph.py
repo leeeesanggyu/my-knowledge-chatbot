@@ -1,3 +1,5 @@
+import json
+
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph
 
@@ -6,6 +8,7 @@ from app.velog.vector_store import VelogVectorStore
 
 # 메모리 기반 사용자별 대화 이력 저장소
 CHAT_HISTORY_STORE = {}
+
 
 # 상태 정의
 class GraphState(dict):
@@ -59,7 +62,9 @@ def answer_node(state: GraphState):
 
     messages = [{"role": "system", "content": system_prompt}] + history
     messages.append({"role": "user", "content": question})
-    print(f"message:: {messages}")
+
+    print(f"message ::")
+    print(json.dumps(messages, indent=2, ensure_ascii=False))
 
     response = llm.invoke(messages)
 
@@ -86,4 +91,4 @@ graph.set_finish_point("generate_answer")
 # 컴파일
 runnable = graph.compile()
 
-print(runnable.get_graph().draw_mermaid())
+# print(runnable.get_graph().draw_mermaid())
