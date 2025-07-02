@@ -22,14 +22,13 @@ class GraphState(dict):
 vector_store = VelogVectorStore()
 
 # LLM 초기화 (LangGraph는 LangChain LLM 사용)
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.3)
+llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.0)
 
 
 # 검색 노드
 def search_node(state: GraphState):
     query = state['question']
-    search_result = vector_store.search(query, top_k=3)
-    print_search_result(search_result)
+    search_result = vector_store.search(query, top_k=3, min_score=0.6)
     state['search_result'] = search_result
     return state
 
