@@ -54,8 +54,7 @@ def answer_node(state: GraphState):
 
     system_prompt = (
         "너는 나의 벨로그 블로그 포스팅만 참고하여 사용자의 질문에 답변하는 챗봇이야.\n"
-        "1. 절대 너의 지식이나 외부 정보에 근거해 답변하지 마.\n"
-        "2. 제시된 블로그 글에 관련 정보가 없다면, '해당 내용을 개발자 이상규의 Velog에서 찾을 수 없습니다.' 라고 대답해.\n"
+        "절대 너의 지식이나 외부 정보에 근거해 답변하지 마.\n"
         "다음은 관련 블로그 글이야:\n"
         f"{context}\n"
         "이 내용을 바탕으로 사용자의 질문에 최대한 상세히 답변해줘."
@@ -78,18 +77,37 @@ def answer_node(state: GraphState):
     return state
 
 
+def fallback_response_node(state: GraphState):
+    state['answer'] = "죄송합니다, 질문하신 내용을 개발자 이상규의 Velog에서 찾을 수 없습니다."
+    return state
+
+
+
 # LangGraph 정의
 graph = StateGraph(GraphState)
 
 graph.add_node("search", search_node)
+graph.add_node("router", lambda state: state)
 graph.add_node("generate_answer", answer_node)
+graph.add_node("fallback_response", fallback_response_node)
 
-# 흐름 연결
+
+def route_by_search_result(state: GraphState):
+    search_result = state["search_result"]
+    has_result = len(search_result.get('documents', [[]])[0]) > 0
+    return "generate_answer" if has_result else "fallback_response"
+
+
+# 간선 연결
 graph.set_entry_point("search")
-graph.add_edge("search", "generate_answer")
+graph.add_edge("search", "router")  # router는 상태 그대로 넘김
+graph.add_conditional_edges("router", route_by_search_result)  # 조건 분기
+
+# 종료 지점
 graph.set_finish_point("generate_answer")
+graph.set_finish_point("fallback_response")
 
 # 컴파일
 runnable = graph.compile()
 
-# print(runnable.get_graph().draw_mermaid())
+print(runnable.get_graph().draw_mermaid())
