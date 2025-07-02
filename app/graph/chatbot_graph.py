@@ -3,7 +3,6 @@ import json
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph
 
-from app.graph.print_utils import print_search_result
 from app.velog.vector_store import VelogVectorStore
 
 # 메모리 기반 사용자별 대화 이력 저장소
@@ -82,7 +81,6 @@ def fallback_response_node(state: GraphState):
     return state
 
 
-
 # LangGraph 정의
 graph = StateGraph(GraphState)
 
@@ -110,4 +108,4 @@ graph.set_finish_point("fallback_response")
 # 컴파일
 runnable = graph.compile()
 
-print(runnable.get_graph().draw_mermaid())
+# print(runnable.get_graph().draw_mermaid())
