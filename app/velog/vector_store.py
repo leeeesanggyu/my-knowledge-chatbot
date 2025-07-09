@@ -67,7 +67,7 @@ class VelogVectorStore:
             'distances': [filtered_scores]
         }
 
-        print("post search results:")
-        print_search_result(post_filtered_results)
+        # print("post search results:")
+        # print_search_result(post_filtered_results)
 
         return post_filtered_results

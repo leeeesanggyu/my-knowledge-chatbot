@@ -13,7 +13,7 @@ async def chat_endpoint(request: ChatRequest):
             "question": request.question
         }
 
-        return runnable.invoke(state)
+        return runnable.invoke(state, debug=False)
     except Exception as e:
-        print("LangGraph 전체 실행 실패:", e)
+        print("LangGraph 실행 실패:", e)
         raise HTTPException(status_code=500, detail=str(e))
